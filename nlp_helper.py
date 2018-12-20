@@ -1,4 +1,5 @@
 import numpy as np
+import preprocessor as p
 
 def convert_to_one_hot(Y, C):
     Y = np.eye(C)[Y.reshape(-1)]
@@ -70,3 +71,16 @@ def load_corpus(path):
         data = f.readlines()
 
     return data
+
+def replace_hashtags(tweet):
+    
+    p.set_options(p.OPT.MENTION, p.OPT.HASHTAG, p.OPT.URL, p.OPT.RESERVED)
+    t=p.parse(tweet)
+    if t.hashtags:
+        for i in t.hashtags:
+            tweet = tweet[:i.start_index] + ' ' + tweet[i.start_index+1:]
+
+    return tweet
+
+def clean_url_replace_hashtag(tweet):
+    return p.clean(replace_hashtags(tweet))
